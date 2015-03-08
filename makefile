@@ -1,11 +1,11 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD
-EXEC = 
-OBJECTS = 
+CXXFLAGS = -Wall -MMD -lmingw32 -lSDL2main -lSDL2
+EXEC = allrgb
+OBJECTS = main.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+	${CXX} ${OBJECTS} -o ${EXEC} ${CXXFLAGS}
 
 -include ${DEPENDS}
 
