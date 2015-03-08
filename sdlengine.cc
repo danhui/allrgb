@@ -11,13 +11,22 @@ void SDLEngine::Init(int height, int width) {
 }
 
 void SDLEngine::DrawRectangle(int x1, int y1, int x2, int y2, Color c) {
+  SDL_SetRenderDrawColor(renderer_, c.r_, c.g_, c.b_, c.a_);
+  SDL_Rect rectangle;
+  rectangle.x = x1;
+  rectangle.y = y1;
+  rectangle.w = x2-x1+1;
+  rectangle.h = y2-y1+1;
+  SDL_RenderFillRect(renderer, &rectangle);
 }
 
 void SDLEngine::DrawPoint(int x, int y, Color c) {
+  SDL_SetRenderDrawColor(renderer_, c.r_, c.g_, c.b_, c.a_);
+  SDL_RenderDrawPoint(renderer_, x, y);
 }
 
 int SDLEngine::EventPoll() {
-  SDL_event e;
+  SDL_Event e;
   if (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN) {
       if (e.key.keysym.sym == 27) {

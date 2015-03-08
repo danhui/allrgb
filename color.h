@@ -4,16 +4,24 @@
 class Color {
   public:
     Color (int r, int g, int b) {
-      this->r = r;
-      this->g = g;
-      this->b = b;
+      r_ = r;
+      g_ = g;
+      b_ = b;
+      a_ = 255;
+    }
+    Color (int r, int g, int b, int a) {
+      r_ = r;
+      g_ = g;
+      b_ = b;
+      a_ = a;
     }
     Color () {
-      r = 0;
-      g = 0;
-      b = 0;
+      r_ = 0;
+      g_ = 0;
+      b_ = 0;
+      a_ = 255;
     }
-    int r, g, b;
+    int r_, g_, b_, a_;
 };
 
 #endif

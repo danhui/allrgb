@@ -12,7 +12,7 @@ class SDLEngine : public GraphicsEngine {
       window_ = NULL;
       renderer_ = NULL;
     }
-    ~SDLEngine {
+    ~SDLEngine () {
       SDL_DestroyWindow(window_);
       SDL_DestroyRenderer(renderer_);
       SDL_Quit();
@@ -24,8 +24,8 @@ class SDLEngine : public GraphicsEngine {
     virtual int EventPoll();
 
   private:
-    SDL_window* window_;
-    SDL_renderer* renderer_;
+    SDL_Window* window_;
+    SDL_Renderer* renderer_;
 };
 
 #endif
