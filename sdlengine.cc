@@ -17,7 +17,7 @@ void SDLEngine::DrawRectangle(int x1, int y1, int x2, int y2, Color c) {
   rectangle.y = y1;
   rectangle.w = x2-x1+1;
   rectangle.h = y2-y1+1;
-  SDL_RenderFillRect(renderer, &rectangle);
+  SDL_RenderFillRect(renderer_, &rectangle);
 }
 
 void SDLEngine::DrawPoint(int x, int y, Color c) {
