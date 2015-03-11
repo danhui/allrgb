@@ -1,3 +1,4 @@
+#include <ctime>
 #include <SDL2/SDL.h>
 
 #include "color.h"
@@ -22,10 +23,14 @@ class SDLEngine : public GraphicsEngine {
     virtual void DrawRectangle(int x1, int y1, int x2, int y2, Color c);
     virtual void DrawPoint(int x, int y, Color c);
     virtual int EventPoll();
+    virtual void Display();
 
   private:
     SDL_Window* window_;
     SDL_Renderer* renderer_;
+    SDL_Texture* texture_;
+    int refresh_rate_;
+    time_t last_render_;
 };
 
 #endif

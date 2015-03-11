@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD -lmingw32 -lSDL2main -lSDL2
+CXXFLAGS = -Wall -MMD -lmingw32 -lSDL2main -lSDL2 -DDEBUG
 EXEC = allrgb
 OBJECTS = main.o sdlengine.o
 DEPENDS = ${OBJECTS:.o=.d}
