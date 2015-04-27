@@ -1,17 +1,26 @@
+#include <utility>
+
 #include "color.h"
 
 #ifndef __GRAPHICSENGINE_H__
 #define __GRAPHICSENGINE_H__
 
-const int kEscapeCode = 27;
 const int kNoEvent = 0;
+const int kKeyDown = 1;
+
+const int kArrowUp = -1;
+const int kArrowDown = -2;
+const int kArrowLeft = -3;
+const int kArrowRight = -4;
+
+const int kEscapeCode = 27;
 
 class GraphicsEngine {
   public:
     virtual void Init(int height, int width) = 0;
     virtual void DrawRectangle(int x1, int y1, int x2, int y2, Color c) = 0;
     virtual void DrawPoint(int x, int y, Color c) = 0;
-    virtual int EventPoll() = 0;
+    virtual std::pair<int, int> EventPoll() = 0;
     virtual void Display() = 0;
 };
 

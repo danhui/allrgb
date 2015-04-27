@@ -20,9 +20,10 @@ void SDLEngine::Init(int height, int width) {
   } else {
     refresh_rate_ = 30;
   }
-  fprintf(stderr, "SDL Window %d by %d, %d Hz", width, height, refresh_rate_);
 #ifdef DEBUG
-  SDL_Delay(1000);
+  refresh_rate_ = 30;
+  fprintf(stderr, "SDL Window %d by %d, %d Hz\n", width, height, refresh_rate_);
+  //SDL_Delay(1000);
 #endif
 }
 
@@ -41,24 +42,32 @@ void SDLEngine::DrawPoint(int x, int y, Color c) {
   SDL_RenderDrawPoint(renderer_, x, y);
 }
 
-int SDLEngine::EventPoll() {
+std::pair<int, int> SDLEngine::EventPoll() {
   SDL_Event e;
   if (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN) {
-      if (e.key.keysym.sym == 27) {
-        return kEscapeCode;
-      }
-      else {
-        return e.key.keysym.sym;
+      switch (e.key.keysym.sym) {
+        case SDLK_LEFT:
+          return std::make_pair(kKeyDown, kArrowLeft);
+        case SDLK_RIGHT:
+          return std::make_pair(kKeyDown, kArrowRight);
+        case SDLK_UP:
+          return std::make_pair(kKeyDown, kArrowUp);
+        case SDLK_DOWN:
+          return std::make_pair(kKeyDown, kArrowDown);
+        default:
+          return std::make_pair(kKeyDown, e.key.keysym.sym);
       }
     }
   }
-  return kNoEvent;
+  return std::make_pair(kNoEvent, 0);
 }
 
 void SDLEngine::Display() {
   time_t now = time(0);
   if (now - last_render_ >= 1.0 / refresh_rate_) {
     last_render_ = now;
+    SDL_RenderClear(renderer_);
+    SDL_RenderPresent(renderer_);
   }
 }

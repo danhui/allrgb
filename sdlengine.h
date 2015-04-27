@@ -12,17 +12,19 @@ class SDLEngine : public GraphicsEngine {
     SDLEngine () {
       window_ = NULL;
       renderer_ = NULL;
+      texture_ = NULL;
     }
     ~SDLEngine () {
-      SDL_DestroyWindow(window_);
+      SDL_DestroyTexture(texture_);
       SDL_DestroyRenderer(renderer_);
+      SDL_DestroyWindow(window_);
       SDL_Quit();
     }
 
     virtual void Init(int height, int width);
     virtual void DrawRectangle(int x1, int y1, int x2, int y2, Color c);
     virtual void DrawPoint(int x, int y, Color c);
-    virtual int EventPoll();
+    virtual std::pair<int, int> EventPoll();
     virtual void Display();
 
   private:

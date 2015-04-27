@@ -18,12 +18,20 @@ int main(int argc, char* argv[]) {
     }
   }
   GraphicsEngine* display = new SDLEngine();
-#ifdef DEBUG
-  if (window_height < 0 && window_width < 0) {
+  if (window_height < 0 || window_width < 0) {
     window_height = 480;
     window_width = 640;
   }
-#endif
   display->Init(window_height, window_width);
+  std::pair<int, int> event;
+  while (event.second != kEscapeCode) {
+    event = display->EventPoll();
+#ifdef DEBUG
+    if (event.first != kNoEvent) {
+      fprintf(stderr, "Event read: %d %d\n", event.first, event.second);
+    }
+#endif
+    display->Display();
+  }
   return 0;
 }
