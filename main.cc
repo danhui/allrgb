@@ -31,6 +31,8 @@ int main(int argc, char* argv[]) {
       fprintf(stderr, "Event read: %d %d\n", event.first, event.second);
     }
 #endif
+    //display->DrawRectangle(0,0,1000,1000,Color(0,0,255));
+    //display->DrawRectangle(320,240,320,240,Color(0,255,0));
     display->Display();
   }
   return 0;

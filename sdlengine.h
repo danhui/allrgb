@@ -22,7 +22,7 @@ class SDLEngine : public GraphicsEngine {
     }
 
     virtual void Init(int height, int width);
-    virtual void DrawRectangle(int x1, int y1, int x2, int y2, Color c);
+    virtual void DrawRectangle(int x, int y, int w, int h, Color c);
     virtual void DrawPoint(int x, int y, Color c);
     virtual std::pair<int, int> EventPoll();
     virtual void Display();

@@ -23,23 +23,34 @@ void SDLEngine::Init(int height, int width) {
 #ifdef DEBUG
   refresh_rate_ = 30;
   fprintf(stderr, "SDL Window %d by %d, %d Hz\n", width, height, refresh_rate_);
-  //SDL_Delay(1000);
 #endif
+  texture_ = SDL_CreateTexture(renderer_, SDL_PIXELFORMAT_RGB888,
+      SDL_TEXTUREACCESS_STREAMING, kMapWidth, kMapHeight);
 }
 
-void SDLEngine::DrawRectangle(int x1, int y1, int x2, int y2, Color c) {
-  SDL_SetRenderDrawColor(renderer_, c.r_, c.g_, c.b_, c.a_);
-  SDL_Rect rectangle;
-  rectangle.x = x1;
-  rectangle.y = y1;
-  rectangle.w = x2-x1+1;
-  rectangle.h = y2-y1+1;
-  SDL_RenderFillRect(renderer_, &rectangle);
+void SDLEngine::DrawRectangle(int x, int y, int w, int h, Color c) {
+  void *pixels = NULL;
+  int pitch;
+  SDL_Rect rect = {x, y, w, h};
+  SDL_LockTexture(texture_, &rect, &pixels, &pitch);
+  for (int i = 0; i < h; i++) {
+    for (int j = 0; j < w; j++) {
+      ((uint32_t *)pixels)[i * kMapWidth + j] =
+        (c.r_ << 16) + (c.g_ << 8) + c.b_;
+    }
+  }
+  SDL_UnlockTexture(texture_);
+  //delete [] pixels;
 }
 
 void SDLEngine::DrawPoint(int x, int y, Color c) {
-  SDL_SetRenderDrawColor(renderer_, c.r_, c.g_, c.b_, c.a_);
-  SDL_RenderDrawPoint(renderer_, x, y);
+  void *pixels = NULL;
+  int pitch;
+  SDL_Rect rect = {x, y, 1, 1};
+  SDL_LockTexture(texture_, &rect, &pixels, &pitch);
+  ((uint32_t *)pixels)[0] = (c.r_ << 16) + (c.g_ << 8) + c.b_;
+  SDL_UnlockTexture(texture_);
+  delete [] pixels;
 }
 
 std::pair<int, int> SDLEngine::EventPoll() {
@@ -68,6 +79,11 @@ void SDLEngine::Display() {
   if (now - last_render_ >= 1.0 / refresh_rate_) {
     last_render_ = now;
     SDL_RenderClear(renderer_);
+    SDL_Rect srcrect;
+    srcrect.x = 0;
+    srcrect.y = 0;
+    SDL_GetRendererOutputSize(renderer_, &srcrect.w, &srcrect.h);
+    SDL_RenderCopy(renderer_, texture_, &srcrect, NULL);
     SDL_RenderPresent(renderer_);
   }
 }
