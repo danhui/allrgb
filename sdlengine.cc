@@ -40,7 +40,6 @@ void SDLEngine::DrawRectangle(int x, int y, int w, int h, Color c) {
     }
   }
   SDL_UnlockTexture(texture_);
-  //delete [] pixels;
 }
 
 void SDLEngine::DrawPoint(int x, int y, Color c) {
@@ -50,7 +49,6 @@ void SDLEngine::DrawPoint(int x, int y, Color c) {
   SDL_LockTexture(texture_, &rect, &pixels, &pitch);
   ((uint32_t *)pixels)[0] = (c.r_ << 16) + (c.g_ << 8) + c.b_;
   SDL_UnlockTexture(texture_);
-  delete [] pixels;
 }
 
 std::pair<int, int> SDLEngine::EventPoll() {
