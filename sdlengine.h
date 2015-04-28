@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 
 #include "color.h"
+#include "event.h"
 #include "graphicsengine.h"
 
 #ifndef __SDLENGINE_H__
@@ -24,15 +25,18 @@ class SDLEngine : public GraphicsEngine {
     virtual void Init(int height, int width);
     virtual void DrawRectangle(int x, int y, int w, int h, Color c);
     virtual void DrawPoint(int x, int y, Color c);
-    virtual std::pair<int, int> EventPoll();
+    virtual Event EventPoll();
+    virtual void HandleEvent(Event event);
     virtual void Display();
 
   private:
     SDL_Window* window_;
-    SDL_Renderer* renderer_;
-    SDL_Texture* texture_;
     int refresh_rate_;
-    time_t last_render_;
+    clock_t last_render_;
+    SDL_Renderer* renderer_;
+
+    SDL_Texture* texture_;
+    int x_, y_, width_, height_;
 };
 
 #endif

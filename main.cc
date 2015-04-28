@@ -2,6 +2,7 @@
 #include <GetOpt.h>
 
 #include "color.h"
+#include "event.h"
 #include "graphicsengine.h"
 #include "sdlengine.h"
 
@@ -23,14 +24,16 @@ int main(int argc, char* argv[]) {
     window_width = 640;
   }
   display->Init(window_height, window_width);
-  std::pair<int, int> event;
-  while (event.second != kEscapeCode) {
+  Event event;
+  while (event.value_ != kEscapeCode) {
     event = display->EventPoll();
 #ifdef DEBUG
-    if (event.first != kNoEvent) {
-      fprintf(stderr, "Event read: %d %d\n", event.first, event.second);
+    if (event.type_ != kNoEvent) {
+      fprintf(stderr, "Event read: %d %d\n", event.type_, event.value_);
     }
 #endif
+    display->DrawRectangle(2048, 2048, 315, 234, Color(255,0,0));
+    display->HandleEvent(event);
     display->Display();
   }
   return 0;
