@@ -25,7 +25,7 @@ const int kMapHeight = 4096;
 const int kMapWidth = 4096;
 
 // Max pixel speed for both directions.
-const int kMaxSpeed = 25;
+const int kMaxSpeed = 100;
 
 // How often the keyboard state should be processed (seconds).
 const double kKeyProcess = 0.05;

@@ -4,6 +4,7 @@
 
 #include "color.h"
 #include "debug.h"
+#include "distributor.h"
 #include "event.h"
 #include "graphicsengine.h"
 #include "sdlengine.h"
@@ -21,14 +22,15 @@ int main(int argc, char* argv[]) {
         break;
     }
   }
-  GraphicsEngine* display = new SDLEngine();
+  GraphicsEngine *display = new SDLEngine();
   // Change dimensions if invalid ones are used.
   if (window_height <= 0 || window_width <= 0) {
     window_height = 480;
     window_width = 640;
   }
   display->Init(window_height, window_width);
-  display->DrawRectangle(2048, 2048, 315, 234, Color(255,0,0));
+  display->DrawRectangle(0, 0, kMapWidth, kMapHeight, Color(255, 255, 255));
+  //Distributor *distributor = new RandomWalkDistributor();
   Event event;
   // Stores the status of keyboard keys.
   std::map<int, int> key_status;

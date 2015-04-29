@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD -lmingw32 -lSDL2main -lSDL2 -DDEBUG=1
+CXXFLAGS = -Wall -MMD -lmingw32 -lSDL2main -lSDL2 -std=c++11 -DDEBUG=0
 EXEC = allrgb
 OBJECTS = main.o sdlengine.o
 DEPENDS = ${OBJECTS:.o=.d}
@@ -12,4 +12,4 @@ ${EXEC}: ${OBJECTS}
 .PHONY: clean
 
 clean:
-	rm ${OBJECTS} ${EXEC} ${EXEC}.exe ${DEPENDS}
+	rm ${OBJECTS} ${EXEC} ${DEPENDS}
