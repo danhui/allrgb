@@ -1,6 +1,8 @@
 #ifndef __COLOR_H__
 #define __COLOR_H__
 
+// Since rendering might change from SDL2, a custom Color class was used.
+
 class Color {
   public:
     Color (int r, int g, int b) {

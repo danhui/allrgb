@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 
 #include "color.h"
+#include "debug.h"
 #include "event.h"
 #include "graphicsengine.h"
 
@@ -16,22 +17,26 @@ void SDLEngine::Init(int height, int width) {
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_DisplayMode dm;
   SDL_GetDesktopDisplayMode(0, &dm);
+  // Make sure the desired dimensions don't exceed those of the screen.
   if (height_ < 0 || width_ < 0 || height_ > dm.h || width_ > dm.w) {
     height_ = dm.h / 2;
     width_ = dm.w / 2;
   }
   SDL_CreateWindowAndRenderer(width_, height_, 0, &window_, &renderer_);
+  // Determine refresh rate or default to 30 Hz.
   if (dm.refresh_rate > 0) {
     refresh_rate_ = dm.refresh_rate;
   } else {
     refresh_rate_ = 30;
   }
-#ifdef DEBUG
-  fprintf(stderr, "SDL Window %d by %d, %d Hz\n",
-      width_, height_, refresh_rate_);
-#endif
+  debug(1, "SDL Window %d by %d, %d Hz\n", width_, height_,
+      refresh_rate_);
+  // Texture is full size, but only parts of it will be shown.
   texture_ = SDL_CreateTexture(renderer_, SDL_PIXELFORMAT_RGB888,
       SDL_TEXTUREACCESS_STREAMING, kMapWidth, kMapHeight);
+  // Start near the center.
+  // Note that x_ and y_ here represents the top-left corner of the viewing area
+  // aka the renderer + window pair.
   x_ = kMapWidth / 2 - width_ / 2;
   y_ = kMapHeight / 2 - height_ / 2;
   vx_ = 0;
@@ -84,10 +89,13 @@ Event SDLEngine::EventPoll() {
 }
 
 void SDLEngine::HandleKeys(std::map<int, int> *key_status) {
+  // Might make helper functions to reduce repetition.
   if ((*key_status)[kArrowUp] == kKeyDown) {
+    // If direction key is down increase speed in that direction.
     vy_--;
   }
   else if ((*key_status)[kArrowUp] == kKeyUp) {
+    // Once direction key is released, bring it back to 0 if needed.
     if (vy_ < 0) {
       vy_ = 0;
     }
@@ -116,23 +124,26 @@ void SDLEngine::HandleKeys(std::map<int, int> *key_status) {
       vx_ = 0;
     }
   }
+  // Keep speeds within speed limit.
   vx_ = std::min(std::max(-kMaxSpeed, vx_), kMaxSpeed);
   vy_ = std::min(std::max(-kMaxSpeed, vy_), kMaxSpeed);
   x_ += vx_;
   y_ += vy_;
+  // Stay on texture for vieweing.
   x_ = std::min(std::max(0, x_), kMapWidth - width_);
   y_ = std::min(std::max(0, y_), kMapHeight - height_);
-#ifdef DEBUG
   if (vx_ != 0 || vy_ != 0) {
-    printf("%d %d %d %d\n", x_, y_, vx_, vy_);
+    debug(5, "%d %d %d %d\n", x_, y_, vx_, vy_);
   }
-#endif
 }
 
 void SDLEngine::Display() {
   double diff = (double) (clock() - last_render_) / CLOCKS_PER_SEC;
   if (diff >= 1.0 / refresh_rate_) {
+    // Again check refresh rate before redisplaying.
+    debug(10, "Last render %.5f sec. ago\n", diff);
     SDL_RenderClear(renderer_);
+    // Display a part of the texture_.
     SDL_Rect srcrect = {x_, y_, width_, height_};
     SDL_RenderCopy(renderer_, texture_, &srcrect, NULL);
     SDL_RenderPresent(renderer_);

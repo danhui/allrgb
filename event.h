@@ -1,6 +1,10 @@
 #ifndef __EVENT_H__
 #define __EVENT_H__
 
+// Event stores two things:
+// 1. What type of event (e.g. mouse down, key up, key down, etc.)
+// 2. The value from the event (eg. an ascii code).
+
 class Event {
   public:
     Event (int type, int value) {

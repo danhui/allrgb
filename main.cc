@@ -3,6 +3,7 @@
 #include <map>
 
 #include "color.h"
+#include "debug.h"
 #include "event.h"
 #include "graphicsengine.h"
 #include "sdlengine.h"
@@ -11,6 +12,7 @@ int main(int argc, char* argv[]) {
   int window_height = -1;
   int window_width = -1;
   int option_char;
+  // Parse command-line arguments.
   while ((option_char = getopt(argc, argv, "w:h:")) != EOF) {
     switch (option_char) {
       case 'w': window_width = atoi(optarg); break;
@@ -20,25 +22,29 @@ int main(int argc, char* argv[]) {
     }
   }
   GraphicsEngine* display = new SDLEngine();
-  if (window_height < 0 || window_width < 0) {
+  // Change dimensions if invalid ones are used.
+  if (window_height <= 0 || window_width <= 0) {
     window_height = 480;
     window_width = 640;
   }
   display->Init(window_height, window_width);
   display->DrawRectangle(2048, 2048, 315, 234, Color(255,0,0));
   Event event;
+  // Stores the status of keyboard keys.
   std::map<int, int> key_status;
+  // Handle key press status at a constant interval.
   clock_t last_key_handle = clock();
   while (event.GetValue() != kEscapeCode) {
+    // Query for events, and update keyboard status.
     event = display->EventPoll();
     key_status[event.GetValue()] = event.GetType();
     if (event.GetType() != kNoEvent) {
-#ifdef DEBUG
-      fprintf(stderr, "Event read: %d %d\n", event.GetType(), event.GetValue());
-#endif
+      debug(4, "Event read: %d %d\n", event.GetType(), event.GetValue());
     }
     double diff = (double) (clock() - last_key_handle ) / CLOCKS_PER_SEC;
     if (diff >= kKeyProcess) {
+      // Process keyboard state.
+      debug(10, "Last key process %.5f sec. ago\n", diff);
       display->HandleKeys(&key_status);
       last_key_handle = clock();
     }
