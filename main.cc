@@ -1,5 +1,6 @@
 #include <cstdio>
-#include <GetOpt.h>
+#include <getopt.h>
+#include <map>
 
 #include "color.h"
 #include "event.h"
@@ -24,16 +25,23 @@ int main(int argc, char* argv[]) {
     window_width = 640;
   }
   display->Init(window_height, window_width);
+  display->DrawRectangle(2048, 2048, 315, 234, Color(255,0,0));
   Event event;
-  while (event.value_ != kEscapeCode) {
+  std::map<int, int> key_status;
+  clock_t last_key_handle = clock();
+  while (event.GetValue() != kEscapeCode) {
     event = display->EventPoll();
+    key_status[event.GetValue()] = event.GetType();
+    if (event.GetType() != kNoEvent) {
 #ifdef DEBUG
-    if (event.type_ != kNoEvent) {
-      fprintf(stderr, "Event read: %d %d\n", event.type_, event.value_);
-    }
+      fprintf(stderr, "Event read: %d %d\n", event.GetType(), event.GetValue());
 #endif
-    display->DrawRectangle(2048, 2048, 315, 234, Color(255,0,0));
-    display->HandleEvent(event);
+    }
+    double diff = (double) (clock() - last_key_handle ) / CLOCKS_PER_SEC;
+    if (diff >= kKeyProcess) {
+      display->HandleKeys(&key_status);
+      last_key_handle = clock();
+    }
     display->Display();
   }
   return 0;

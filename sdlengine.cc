@@ -1,11 +1,14 @@
 #include "sdlengine.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <ctime>
+#include <map>
 #include <SDL2/SDL.h>
 
 #include "color.h"
 #include "event.h"
+#include "graphicsengine.h"
 
 void SDLEngine::Init(int height, int width) {
   width_ = width;
@@ -31,6 +34,8 @@ void SDLEngine::Init(int height, int width) {
       SDL_TEXTUREACCESS_STREAMING, kMapWidth, kMapHeight);
   x_ = kMapWidth / 2 - width_ / 2;
   y_ = kMapHeight / 2 - height_ / 2;
+  vx_ = 0;
+  vy_ = 0;
   last_render_ = clock();
 }
 
@@ -78,17 +83,59 @@ Event SDLEngine::EventPoll() {
   return Event(kNoEvent, 0);
 }
 
-void SDLEngine::HandleEvent(Event event) {
+void SDLEngine::HandleKeys(std::map<int, int> *key_status) {
+  if ((*key_status)[kArrowUp] == kKeyDown) {
+    vy_--;
+  }
+  else if ((*key_status)[kArrowUp] == kKeyUp) {
+    if (vy_ < 0) {
+      vy_ = 0;
+    }
+  }
+  if ((*key_status)[kArrowDown] == kKeyDown) {
+    vy_++;
+  }
+  else if ((*key_status)[kArrowDown] == kKeyUp) {
+    if (vy_ > 0) {
+      vy_ = 0;
+    }
+  }
+  if ((*key_status)[kArrowLeft] == kKeyDown) {
+    vx_--;
+  }
+  else if ((*key_status)[kArrowLeft] == kKeyUp) {
+    if (vx_ < 0) {
+      vx_ = 0;
+    }
+  }
+  if ((*key_status)[kArrowRight] == kKeyDown) {
+    vx_++;
+  }
+  else if ((*key_status)[kArrowRight] == kKeyUp) {
+    if (vx_ > 0) {
+      vx_ = 0;
+    }
+  }
+  vx_ = std::min(std::max(-kMaxSpeed, vx_), kMaxSpeed);
+  vy_ = std::min(std::max(-kMaxSpeed, vy_), kMaxSpeed);
+  x_ += vx_;
+  y_ += vy_;
+  x_ = std::min(std::max(0, x_), kMapWidth - width_);
+  y_ = std::min(std::max(0, y_), kMapHeight - height_);
+#ifdef DEBUG
+  if (vx_ != 0 || vy_ != 0) {
+    printf("%d %d %d %d\n", x_, y_, vx_, vy_);
+  }
+#endif
 }
 
 void SDLEngine::Display() {
-  clock_t now = clock();
-  double diff = (double) (now - last_render_) / CLOCKS_PER_SEC;
+  double diff = (double) (clock() - last_render_) / CLOCKS_PER_SEC;
   if (diff >= 1.0 / refresh_rate_) {
     SDL_RenderClear(renderer_);
     SDL_Rect srcrect = {x_, y_, width_, height_};
     SDL_RenderCopy(renderer_, texture_, &srcrect, NULL);
     SDL_RenderPresent(renderer_);
-    last_render_ = now;
+    last_render_ = clock();
   }
 }

@@ -1,3 +1,4 @@
+#include <map>
 #include <utility>
 
 #include "color.h"
@@ -14,11 +15,14 @@ const int kArrowUp = -1;
 const int kArrowDown = -2;
 const int kArrowLeft = -3;
 const int kArrowRight = -4;
-
 const int kEscapeCode = 27;
 
 const int kMapHeight = 4096;
 const int kMapWidth = 4096;
+
+const int kMaxSpeed = 25;
+
+const double kKeyProcess = 0.05;
 
 class GraphicsEngine {
   public:
@@ -26,7 +30,7 @@ class GraphicsEngine {
     virtual void DrawRectangle(int x, int y, int w, int h, Color c) = 0;
     virtual void DrawPoint(int x, int y, Color c) = 0;
     virtual Event EventPoll() = 0;
-    virtual void HandleEvent(Event event) = 0;
+    virtual void HandleKeys(std::map<int, int> *key_status) = 0;
     virtual void Display() = 0;
 };
 

@@ -1,4 +1,5 @@
 #include <ctime>
+#include <map>
 #include <SDL2/SDL.h>
 
 #include "color.h"
@@ -26,7 +27,7 @@ class SDLEngine : public GraphicsEngine {
     virtual void DrawRectangle(int x, int y, int w, int h, Color c);
     virtual void DrawPoint(int x, int y, Color c);
     virtual Event EventPoll();
-    virtual void HandleEvent(Event event);
+    virtual void HandleKeys(std::map<int, int> *key_status);
     virtual void Display();
 
   private:
@@ -37,6 +38,7 @@ class SDLEngine : public GraphicsEngine {
 
     SDL_Texture* texture_;
     int x_, y_, width_, height_;
+    int vx_, vy_;
 };
 
 #endif
