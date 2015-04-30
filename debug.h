@@ -26,6 +26,10 @@
 // Debug with no variables to output.
 #define debug_l(level) \
   do { if (DEBUG && DEBUG >= level) \
-    fprintf(stderr, "%s:%d:%s()", __FILE__, __LINE__, __func__); } while (0) 
+    fprintf(stderr, "%s:%d:%s()", __FILE__, __LINE__, __func__); } while (0)
+
+// If debug level >= level, return true.
+#define d_check(level) \
+  (DEBUG && DEBUG >= level ? 1 : 0)
 
 #endif

@@ -23,11 +23,6 @@ int main(int argc, char* argv[]) {
     }
   }
   GraphicsEngine *display = new SDLEngine();
-  // Change dimensions if invalid ones are used.
-  if (window_height <= 0 || window_width <= 0) {
-    window_height = 480;
-    window_width = 640;
-  }
   display->Init(window_height, window_width);
   display->DrawRectangle(0, 0, kMapWidth, kMapHeight, Color(255, 255, 255));
   //Distributor *distributor = new RandomWalkDistributor();
