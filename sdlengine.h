@@ -27,10 +27,13 @@ class SDLEngine : public GraphicsEngine {
     virtual void DrawRectangle(int x, int y, int w, int h, Color c);
     virtual void DrawPoint(int x, int y, Color c);
     virtual Event EventPoll();
-    virtual void HandleKeys(std::map<int, int> *key_status);
+    virtual void HandleKeys(const std::map<int, int> &key_status);
     virtual void Display();
 
   private:
+    void AdjustSpeed(const std::map<int,int> &key_status, int dir, int mult,
+                     int *v);
+
     SDL_Window* window_;
     int refresh_rate_;
     clock_t last_render_;

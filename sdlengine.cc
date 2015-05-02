@@ -88,42 +88,24 @@ Event SDLEngine::EventPoll() {
   return Event(kNoEvent, 0);
 }
 
-void SDLEngine::HandleKeys(std::map<int, int> *key_status) {
-  // Might make helper functions to reduce repetition.
-  if ((*key_status)[kArrowUp] == kKeyDown) {
-    // If direction key is down increase speed in that direction.
-    vy_--;
-  }
-  else if ((*key_status)[kArrowUp] == kKeyUp) {
-    // Once direction key is released, bring it back to 0 if needed.
-    if (vy_ < 0) {
-      vy_ = 0;
+void SDLEngine::AdjustSpeed(const std::map<int,int> &key_status, int dir,
+                            int mult, int *v) {
+  if (key_status.find(dir)->second == kKeyDown) {
+    // Key down, so increase velocity.
+    *v += mult;
+  } else if (key_status.find(dir)->second == kKeyUp) {
+    // Set velocity to 0 on release if going in correct direction.
+    if (*v * mult > 0) {
+      *v = 0;
     }
   }
-  if ((*key_status)[kArrowDown] == kKeyDown) {
-    vy_++;
-  }
-  else if ((*key_status)[kArrowDown] == kKeyUp) {
-    if (vy_ > 0) {
-      vy_ = 0;
-    }
-  }
-  if ((*key_status)[kArrowLeft] == kKeyDown) {
-    vx_--;
-  }
-  else if ((*key_status)[kArrowLeft] == kKeyUp) {
-    if (vx_ < 0) {
-      vx_ = 0;
-    }
-  }
-  if ((*key_status)[kArrowRight] == kKeyDown) {
-    vx_++;
-  }
-  else if ((*key_status)[kArrowRight] == kKeyUp) {
-    if (vx_ > 0) {
-      vx_ = 0;
-    }
-  }
+}
+
+void SDLEngine::HandleKeys(const std::map<int, int> &key_status) {
+  this->AdjustSpeed(key_status, kArrowUp, -1, &vy_);
+  this->AdjustSpeed(key_status, kArrowDown, 1, &vy_);
+  this->AdjustSpeed(key_status, kArrowLeft, -1, &vx_);
+  this->AdjustSpeed(key_status, kArrowRight, 1, &vx_);
   // Keep speeds within speed limit.
   vx_ = std::min(std::max(-kMaxSpeed, vx_), kMaxSpeed);
   vy_ = std::min(std::max(-kMaxSpeed, vy_), kMaxSpeed);

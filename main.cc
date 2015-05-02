@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
   GraphicsEngine *display = new SDLEngine();
   display->Init(window_height, window_width);
   display->DrawRectangle(0, 0, kMapWidth, kMapHeight, Color(255, 255, 255));
+  display->DrawRectangle(2048, 2048, 50, 50, Color(255, 0, 0));
   //Distributor *distributor = new RandomWalkDistributor();
   Event event;
   // Stores the status of keyboard keys.
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
     if (diff >= kKeyProcess) {
       // Process keyboard state.
       debug(10, "Last key process %.5f sec. ago\n", diff);
-      display->HandleKeys(&key_status);
+      display->HandleKeys(key_status);
       last_key_handle = clock();
     }
     display->Display();

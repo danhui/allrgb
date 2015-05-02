@@ -36,7 +36,7 @@ class GraphicsEngine {
     virtual void DrawRectangle(int x, int y, int w, int h, Color c) = 0;
     virtual void DrawPoint(int x, int y, Color c) = 0;
     virtual Event EventPoll() = 0;
-    virtual void HandleKeys(std::map<int, int> *key_status) = 0;
+    virtual void HandleKeys(const std::map<int, int> &key_status) = 0;
     virtual void Display() = 0;
 };
 
