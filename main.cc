@@ -7,6 +7,7 @@
 #include "distributor.h"
 #include "event.h"
 #include "graphicsengine.h"
+#include "randomwalkdistributor.h"
 #include "sdlengine.h"
 
 int main(int argc, char* argv[]) {
@@ -26,7 +27,8 @@ int main(int argc, char* argv[]) {
   display->Init(window_height, window_width);
   display->DrawRectangle(0, 0, kMapWidth, kMapHeight, Color(255, 255, 255));
   display->DrawRectangle(2048, 2048, 50, 50, Color(255, 0, 0));
-  //Distributor *distributor = new RandomWalkDistributor();
+  Distributor *distributor = new RandomWalkDistributor();
+  distributor->Init();
   Event event;
   // Stores the status of keyboard keys.
   std::map<int, int> key_status;

@@ -1,7 +1,9 @@
 CXX = g++
 CXXFLAGS = -Wall -MMD -lmingw32 -lSDL2main -lSDL2 -std=c++11 -DDEBUG=0
 EXEC = allrgb
-OBJECTS = main.o sdlengine.o
+#OBJECTS = main.o sdlengine.o randomwalkdistributor.o
+SOURCES = $(wildcard *.cc)
+OBJECTS = $(SOURCES:.cc=.o)
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}
@@ -12,4 +14,4 @@ ${EXEC}: ${OBJECTS}
 .PHONY: clean
 
 clean:
-	rm ${OBJECTS} ${EXEC} ${DEPENDS}
+	rm ${OBJECTS} ${DEPENDS} ${EXEC}

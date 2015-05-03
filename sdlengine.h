@@ -1,3 +1,6 @@
+#ifndef __SDLENGINE_H__
+#define __SDLENGINE_H__
+
 #include <ctime>
 #include <map>
 #include <SDL2/SDL.h>
@@ -5,9 +8,6 @@
 #include "color.h"
 #include "event.h"
 #include "graphicsengine.h"
-
-#ifndef __SDLENGINE_H__
-#define __SDLENGINE_H__
 
 class SDLEngine : public GraphicsEngine {
   public:

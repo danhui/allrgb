@@ -1,11 +1,11 @@
+#ifndef __GRAPHICSENGINE_H__
+#define __GRAPHICSENGINE_H__
+
 #include <map>
 #include <utility>
 
 #include "color.h"
 #include "event.h"
-
-#ifndef __GRAPHICSENGINE_H__
-#define __GRAPHICSENGINE_H__
 
 // Possible Event types.
 const int kNoEvent = 0;
