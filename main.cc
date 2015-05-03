@@ -26,9 +26,14 @@ int main(int argc, char* argv[]) {
   GraphicsEngine *display = new SDLEngine();
   display->Init(window_height, window_width);
   display->DrawRectangle(0, 0, kMapWidth, kMapHeight, Color(255, 255, 255));
-  display->DrawRectangle(2048, 2048, 50, 50, Color(255, 0, 0));
+  //display->DrawRectangle(2048, 2048, 50, 50, Color(255, 0, 0));
   Distributor *distributor = new RandomWalkDistributor();
-  distributor->Init();
+  Color c;
+  Point p;
+  distributor->Init(&c, &p);
+  distributor->UpdateColor(c);
+  distributor->UpdatePoint(p);
+  display->DrawPoint(p.GetX(), p.GetY(), c);
   Event event;
   // Stores the status of keyboard keys.
   std::map<int, int> key_status;

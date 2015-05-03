@@ -23,6 +23,19 @@ class Color {
       b_ = 0;
       a_ = 255;
     }
+    int GetR() {
+      return r_;
+    }
+    int GetG() {
+      return g_;
+    }
+    int GetB() {
+      return b_;
+    }
+    int GetA() {
+      return a_;
+    }
+  private:
     int r_, g_, b_, a_;
 };
 

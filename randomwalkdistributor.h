@@ -8,14 +8,13 @@
 
 class RandomWalkDistributor : public Distributor {
   public:
-    RandomWalkDistributor() { }
-    ~RandomWalkDistributor() { }
+    virtual void Init(Color *c, Point *p);
+    virtual Color GetColor(Color prev_color);
+    virtual void UpdateColor(Color cur_color);
+    virtual Point GetPoint(Point prev_point);
+    virtual void UpdatePoint(Point cur_point);
 
-    virtual void Init();
-    virtual Color GetColor();
-    virtual Point GetPoint();
   private:
-    Color GetColor(int p, int lr, int hr, int lg, int hg, int lb, int hb);
 
     Color map_state_[kMapWidth][kMapHeight];
     bool map_used_[kMapWidth][kMapHeight];

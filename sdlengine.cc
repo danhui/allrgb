@@ -51,7 +51,7 @@ void SDLEngine::DrawRectangle(int x, int y, int w, int h, Color c) {
   SDL_LockTexture(texture_, &rect, reinterpret_cast<void **>(&pixels), &pitch);
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
-      pixels[i * kMapWidth + j] = (c.r_ << 16) + (c.g_ << 8) + c.b_;
+      pixels[i * kMapWidth + j] = (c.GetR() << 16) + (c.GetG() << 8) + c.GetB();
     }
   }
   SDL_UnlockTexture(texture_);
@@ -62,7 +62,7 @@ void SDLEngine::DrawPoint(int x, int y, Color c) {
   int pitch;
   SDL_Rect rect = {x, y, 1, 1};
   SDL_LockTexture(texture_, &rect, reinterpret_cast<void **>(&pixels), &pitch);
-  pixels[0] = (c.r_ << 16) + (c.g_ << 8) + c.b_;
+  pixels[0] = (c.GetR() << 16) + (c.GetG() << 8) + c.GetB();
   SDL_UnlockTexture(texture_);
 }
 
