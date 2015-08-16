@@ -12,6 +12,8 @@
 // A gotcha: additional arguments (i.e. variables for debug output) are
 // mandatory, debug_l serves to sidestep that.
 
+#ifdef DEBUG
+
 // Normal debug.
 #define debug(level, fmt, ...) \
   do { if (DEBUG && DEBUG >= level) \
@@ -31,5 +33,14 @@
 // If debug level >= level, return true.
 #define d_check(level) \
   (DEBUG && DEBUG >= level ? 1 : 0)
+
+#else
+
+#define debug(level, fmt, ...) 0
+#define debug_v(level, fmt, ...) 0
+#define debug_l(level) 0
+#define d_check(level) 0
+
+#endif
 
 #endif

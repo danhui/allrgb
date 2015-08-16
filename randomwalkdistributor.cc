@@ -19,20 +19,13 @@ void RandomWalkDistributor::Init(Color *c, Point *p) {
   auto channel_value = std::bind(distribution, generator);
   *c = Color(channel_value(), channel_value(), channel_value());
   *p = Point(kMapWidth / 2, kMapHeight / 2);
-  debug(1, "Initial color (%d,%d,%d) at point (%d,%d)",
-      c->GetR(), c->GetG(), c->GetB(), p->GetX(), p->GetY());
 }
 
-Color RandomWalkDistributor::GetColor(Color prev_color) {
-  return Color(-1, -1, -1);
+void RandomWalkDistributor::Query(Color *c, Point *p) {
+  prev_color_ = *c;
+  prev_point_ = *p;
 }
 
-void RandomWalkDistributor::UpdateColor(Color cur_color) {
-}
-
-Point RandomWalkDistributor::GetPoint(Point prev_point) {
-  return Point(-1, -1);
-}
-
-void RandomWalkDistributor::UpdatePoint(Point cur_point) {
+bool RandomWalkDistributor::Done() {
+  return true;
 }
