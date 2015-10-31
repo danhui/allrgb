@@ -6,10 +6,10 @@
 #include "debug.h"
 #include "distributor.h"
 #include "event.h"
-#include "graphicsengine.h"
-#include "randomdistributor.h"
-#include "randomwalkdistributor.h"
-#include "sdlengine.h"
+#include "graphics_engine.h"
+#include "random_distributor.h"
+#include "random_walk_distributor.h"
+#include "sdl_engine.h"
 
 int main(int argc, char* argv[]) {
   int window_height = -1;
