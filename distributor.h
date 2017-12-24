@@ -1,5 +1,4 @@
-#ifndef __DISTRIBUTOR_H__
-#define __DISTRIBUTOR_H__
+#pragma once
 
 #include "color.h"
 #include "point.h"
@@ -10,5 +9,3 @@ class Distributor {
     virtual void Query(Color *c, Point *p) = 0;
     virtual bool Done() = 0;
 };
-
-#endif

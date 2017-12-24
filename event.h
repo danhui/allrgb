@@ -1,5 +1,4 @@
-#ifndef __EVENT_H__
-#define __EVENT_H__
+#pragma once
 
 // Event stores two things:
 // 1. What type of event (e.g. mouse down, key up, key down, etc.)
@@ -24,5 +23,3 @@ class Event {
   private:
     int type_, value_;
 };
-
-#endif

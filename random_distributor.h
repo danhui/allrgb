@@ -1,6 +1,4 @@
-#ifndef __RANDOM_DISTRIBUTOR_H__
-#define __RANDOM_DISTRIBUTOR_H__
-
+#pragma once
 #include <vector>
 
 #include "color.h"
@@ -18,5 +16,3 @@ class RandomDistributor : public Distributor {
     std::vector<Color> color_remain_;
     std::vector<Point> point_remain_;
 };
-
-#endif

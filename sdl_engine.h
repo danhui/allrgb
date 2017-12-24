@@ -1,5 +1,4 @@
-#ifndef __SDL_ENGINE_H__
-#define __SDL_ENGINE_H__
+#pragma once
 
 #include <ctime>
 #include <map>
@@ -43,5 +42,3 @@ class SDLEngine : public GraphicsEngine {
     int x_, y_, width_, height_;
     int vx_, vy_;
 };
-
-#endif

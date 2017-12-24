@@ -5,9 +5,9 @@
 #include <random>
 
 void RandomDistributor::Init(Color *c, Point *p) {
-  for (int i = 0; i < 256; i++) {
-    for (int j = 0; j < 256; j++) {
-      for (int k = 0; k < 256; k++) {
+  for (int i = 0; i <= kMaxColor ; i++) {
+    for (int j = 0; j <= kMaxColor; j++) {
+      for (int k = 0; k <= kMaxColor; k++) {
         color_remain_.push_back(Color(i, j, k));
       }
     }

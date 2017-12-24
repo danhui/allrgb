@@ -1,5 +1,4 @@
-#ifndef __GRAPHICS_ENGINE_H__
-#define __GRAPHICS_ENGINE_H__
+#pragma once
 
 #include <map>
 #include <utility>
@@ -39,5 +38,3 @@ class GraphicsEngine {
     virtual void HandleKeys(const std::map<int, int> &key_status) = 0;
     virtual void Display() = 0;
 };
-
-#endif

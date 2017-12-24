@@ -14,12 +14,14 @@
 int main(int argc, char* argv[]) {
   int window_height = -1;
   int window_width = -1;
+  bool walk_model = false;
   int option_char;
   // Parse command-line arguments.
-  while ((option_char = getopt(argc, argv, "w:h:")) != EOF) {
+  while ((option_char = getopt(argc, argv, "w:h:z:")) != EOF) {
     switch (option_char) {
       case 'w': window_width = atoi(optarg); break;
       case 'h': window_height = atoi(optarg); break;
+      case 'z': walk_model = true;
       default:
         break;
     }
@@ -28,7 +30,12 @@ int main(int argc, char* argv[]) {
   display->Init(window_height, window_width);
   display->DrawRectangle(0, 0, kMapWidth, kMapHeight, Color(255, 255, 255));
   //display->DrawRectangle(2048, 2048, 50, 50, Color(255, 0, 0));
-  Distributor *distributor = new RandomDistributor();
+  Distributor *distributor;
+  if (walk_model) {
+    distributor = new RandomWalkDistributor();
+  } else {
+    distributor = new RandomDistributor();
+  }
   Color c;
   Point p;
   distributor->Init(&c, &p);

@@ -3,6 +3,8 @@
 
 // Since rendering might change from SDL2, a custom Color class was used.
 
+const int kMaxColor = 255;
+
 class Color {
   public:
     Color (int r, int g, int b) {

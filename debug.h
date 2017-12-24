@@ -1,5 +1,4 @@
-#ifndef __DEBUG_H__
-#define __DEBUG_H__
+#pragma once
 
 #include <cstdio>
 
@@ -40,7 +39,5 @@
 #define debug_v(level, fmt, ...) 0
 #define debug_l(level) 0
 #define d_check(level) 0
-
-#endif
 
 #endif

@@ -1,5 +1,4 @@
-#ifndef __POINT_H__
-#define __POINT_H__
+#pragma once
 
 class Point {
   public:
@@ -11,14 +10,15 @@ class Point {
       x_ = x;
       y_ = y;
     }
-    int GetX() {
+    int GetX() const {
       return x_;
     }
-    int GetY() {
+    int GetY() const {
       return y_;
+    }
+    bool operator<(const Point &p) const {
+      return (x_ < p.GetX()) || (x_ == p.GetX()) && (y_ < p.GetY());
     }
   private:
     int x_, y_;
 };
-
-#endif
