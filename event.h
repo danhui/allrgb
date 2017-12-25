@@ -14,10 +14,10 @@ class Event {
       type_ = 0;
       value_ = 0;
     }
-    int GetType() {
+    int getType() {
       return type_;
     }
-    int GetValue() {
+    int getValue() {
       return value_;
     }
   private:

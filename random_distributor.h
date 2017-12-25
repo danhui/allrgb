@@ -8,9 +8,9 @@
 
 class RandomDistributor : public Distributor {
   public:
-    virtual void Init(Color *c, Point *p);
-    virtual void Query(Color *c, Point *p);
-    virtual bool Done();
+    virtual void init(Color *c, Point *p);
+    virtual void query(Color *c, Point *p);
+    virtual bool done();
 
   private:
     std::vector<Color> color_remain_;

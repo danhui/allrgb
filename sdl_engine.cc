@@ -11,7 +11,7 @@
 #include "event.h"
 #include "graphics_engine.h"
 
-void SDLEngine::Init(int height, int width) {
+void SDLEngine::init(int height, int width) {
   width_ = width;
   height_ = height;
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -44,29 +44,29 @@ void SDLEngine::Init(int height, int width) {
   last_render_ = clock();
 }
 
-void SDLEngine::DrawRectangle(int x, int y, int w, int h, Color c) {
+void SDLEngine::drawRectangle(int x, int y, int w, int h, Color c) {
   int *pixels = NULL;
   int pitch;
   SDL_Rect rect = {x, y, w, h};
   SDL_LockTexture(texture_, &rect, reinterpret_cast<void **>(&pixels), &pitch);
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
-      pixels[i * kMapWidth + j] = (c.GetR() << 16) + (c.GetG() << 8) + c.GetB();
+      pixels[i * kMapWidth + j] = (c.getR() << 16) + (c.getG() << 8) + c.getB();
     }
   }
   SDL_UnlockTexture(texture_);
 }
 
-void SDLEngine::DrawPoint(int x, int y, Color c) {
+void SDLEngine::drawPoint(int x, int y, Color c) {
   int *pixels = NULL;
   int pitch;
   SDL_Rect rect = {x, y, 1, 1};
   SDL_LockTexture(texture_, &rect, reinterpret_cast<void **>(&pixels), &pitch);
-  pixels[0] = (c.GetR() << 16) + (c.GetG() << 8) + c.GetB();
+  pixels[0] = (c.getR() << 16) + (c.getG() << 8) + c.getB();
   SDL_UnlockTexture(texture_);
 }
 
-Event SDLEngine::EventPoll() {
+Event SDLEngine::eventPoll() {
   SDL_Event e;
   if (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
@@ -88,7 +88,7 @@ Event SDLEngine::EventPoll() {
   return Event(kNoEvent, 0);
 }
 
-void SDLEngine::AdjustSpeed(const std::map<int,int> &key_status, int dir,
+void SDLEngine::adjustSpeed(const std::map<int,int> &key_status, int dir,
                             int mult, int *v) {
   if (key_status.find(dir)->second == kKeyDown) {
     // Key down, so increase velocity.
@@ -101,11 +101,11 @@ void SDLEngine::AdjustSpeed(const std::map<int,int> &key_status, int dir,
   }
 }
 
-void SDLEngine::HandleKeys(const std::map<int, int> &key_status) {
-  this->AdjustSpeed(key_status, kArrowUp, -1, &vy_);
-  this->AdjustSpeed(key_status, kArrowDown, 1, &vy_);
-  this->AdjustSpeed(key_status, kArrowLeft, -1, &vx_);
-  this->AdjustSpeed(key_status, kArrowRight, 1, &vx_);
+void SDLEngine::handleKeys(const std::map<int, int> &key_status) {
+  adjustSpeed(key_status, kArrowUp, -1, &vy_);
+  adjustSpeed(key_status, kArrowDown, 1, &vy_);
+  adjustSpeed(key_status, kArrowLeft, -1, &vx_);
+  adjustSpeed(key_status, kArrowRight, 1, &vx_);
   // Keep speeds within speed limit.
   vx_ = std::min(std::max(-kMaxSpeed, vx_), kMaxSpeed);
   vy_ = std::min(std::max(-kMaxSpeed, vy_), kMaxSpeed);
@@ -119,7 +119,7 @@ void SDLEngine::HandleKeys(const std::map<int, int> &key_status) {
   }
 }
 
-void SDLEngine::Display() {
+void SDLEngine::display() {
   double diff = (double) (clock() - last_render_) / CLOCKS_PER_SEC;
   if (diff >= 1.0 / refresh_rate_) {
     // Again check refresh rate before redisplaying.

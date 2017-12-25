@@ -25,16 +25,16 @@ class Color {
       b_ = 0;
       a_ = 255;
     }
-    int GetR() {
+    int getR() {
       return r_;
     }
-    int GetG() {
+    int getG() {
       return g_;
     }
-    int GetB() {
+    int getB() {
       return b_;
     }
-    int GetA() {
+    int getA() {
       return a_;
     }
   private:

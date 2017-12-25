@@ -22,16 +22,16 @@ class SDLEngine : public GraphicsEngine {
       SDL_Quit();
     }
 
-    virtual void Init(int height, int width);
-    virtual void DrawRectangle(int x, int y, int w, int h, Color c);
-    virtual void DrawPoint(int x, int y, Color c);
-    virtual Event EventPoll();
-    virtual void HandleKeys(const std::map<int, int> &key_status);
-    virtual void Display();
+    virtual void init(int height, int width);
+    virtual void drawRectangle(int x, int y, int w, int h, Color c);
+    virtual void drawPoint(int x, int y, Color c);
+    virtual Event eventPoll();
+    virtual void handleKeys(const std::map<int, int> &key_status);
+    virtual void display();
 
   private:
-    void AdjustSpeed(const std::map<int,int> &key_status, int dir, int mult,
-                     int *v);
+    void adjustSpeed(
+      const std::map<int,int> &key_status, int dir, int mult, int *v);
 
     SDL_Window* window_;
     int refresh_rate_;

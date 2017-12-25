@@ -5,7 +5,7 @@
 
 class Distributor {
   public:
-    virtual void Init(Color *c, Point *p) = 0;
-    virtual void Query(Color *c, Point *p) = 0;
-    virtual bool Done() = 0;
+    virtual void init(Color *c, Point *p) = 0;
+    virtual void query(Color *c, Point *p) = 0;
+    virtual bool done() = 0;
 };

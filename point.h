@@ -10,14 +10,14 @@ class Point {
       x_ = x;
       y_ = y;
     }
-    int GetX() const {
+    int getX() const {
       return x_;
     }
-    int GetY() const {
+    int getY() const {
       return y_;
     }
     bool operator<(const Point &p) const {
-      return (x_ < p.GetX()) || (x_ == p.GetX()) && (y_ < p.GetY());
+      return (x_ < p.getX()) || (x_ == p.getX()) && (y_ < p.getY());
     }
   private:
     int x_, y_;

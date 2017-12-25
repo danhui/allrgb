@@ -10,9 +10,9 @@
 
 class RandomWalkDistributor : public Distributor {
   public:
-    virtual void Init(Color *c, Point *p);
-    virtual void Query(Color *c, Point *p);
-    virtual bool Done();
+    virtual void init(Color *c, Point *p);
+    virtual void query(Color *c, Point *p);
+    virtual bool done();
 
   private:
     Color color_at_[kMapWidth + 1][kMapHeight + 1];

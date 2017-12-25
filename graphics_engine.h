@@ -31,10 +31,10 @@ const double kKeyProcess = 0.05;
 
 class GraphicsEngine {
   public:
-    virtual void Init(int height, int width) = 0;
-    virtual void DrawRectangle(int x, int y, int w, int h, Color c) = 0;
-    virtual void DrawPoint(int x, int y, Color c) = 0;
-    virtual Event EventPoll() = 0;
-    virtual void HandleKeys(const std::map<int, int> &key_status) = 0;
-    virtual void Display() = 0;
+    virtual void init(int height, int width) = 0;
+    virtual void drawRectangle(int x, int y, int w, int h, Color c) = 0;
+    virtual void drawPoint(int x, int y, Color c) = 0;
+    virtual Event eventPoll() = 0;
+    virtual void handleKeys(const std::map<int, int> &key_status) = 0;
+    virtual void display() = 0;
 };
