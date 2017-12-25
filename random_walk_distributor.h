@@ -15,9 +15,17 @@ class RandomWalkDistributor : public Distributor {
     virtual bool Done();
 
   private:
-    Color map_state_[kMapWidth][kMapHeight];
-    bool map_used_[kMapWidth][kMapHeight];
-    int points_open_[9000][9000];
+    Color color_at_[kMapHeight][kMapWidth];
+    bool map_used_[kMapHeight][kMapWidth];
+    bool isOccupied(int x, int y);
+
+    Point color_location_[kMaxColor + 1][kMaxColor + 1][kMaxColor + 1];
+
+    int neighbour_spots_[520][520][520];
+    void findNeighbour(
+      int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi);
+    void updateNeighbour(
+      int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi, int val);
 
     int colors_used_[520][520][520];
     void colorSearch(
@@ -26,6 +34,7 @@ class RandomWalkDistributor : public Distributor {
       int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi);
 
     Color prev_color_;
+    Point point_;
     std::vector<Color> candidates_;
     int color_range_;
 };

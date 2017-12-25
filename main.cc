@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <getopt.h>
 #include <map>
+#include <iostream>
 
 #include "color.h"
 #include "debug.h"
@@ -17,11 +18,16 @@ int main(int argc, char* argv[]) {
   bool walk_model = false;
   int option_char;
   // Parse command-line arguments.
-  while ((option_char = getopt(argc, argv, "w:h:z:")) != EOF) {
+  while ((option_char = getopt(argc, argv, "w:h:m:")) != EOF) {
     switch (option_char) {
       case 'w': window_width = atoi(optarg); break;
       case 'h': window_height = atoi(optarg); break;
-      case 'z': walk_model = true;
+      case 'm':
+        std::cout << optarg << std::endl;
+        if ((std::string) optarg == "walk") {
+          walk_model = true;
+        }
+        break;
       default:
         break;
     }
@@ -32,8 +38,10 @@ int main(int argc, char* argv[]) {
   //display->DrawRectangle(2048, 2048, 50, 50, Color(255, 0, 0));
   Distributor *distributor;
   if (walk_model) {
+    debug(10, "Using random walk model.\n", "");
     distributor = new RandomWalkDistributor();
   } else {
+    debug(10, "Using random model.\n", "");
     distributor = new RandomDistributor();
   }
   Color c;
