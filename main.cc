@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <getopt.h>
 #include <map>
-#include <iostream>
 
 #include "color.h"
 #include "debug.h"
@@ -54,7 +53,7 @@ int main(int argc, char* argv[]) {
   std::map<int, int> key_status;
   // Handle key press status at a constant interval.
   clock_t last_key_handle = clock();
-  int counter = 0;
+  int counter = 1;
   while (event.getValue() != kEscapeCode) {
     if (!distributor->done()) {
       distributor->query(&c, &p);
