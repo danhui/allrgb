@@ -23,7 +23,6 @@ int main(int argc, char* argv[]) {
       case 'w': window_width = atoi(optarg); break;
       case 'h': window_height = atoi(optarg); break;
       case 'm':
-        std::cout << optarg << std::endl;
         if ((std::string) optarg == "walk") {
           walk_model = true;
         }

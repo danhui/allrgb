@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Werror -MMD -lmingw32 -lSDL2main -lSDL2
+CXXFLAGS = -Werror -MMD -O2 -lmingw32 -lSDL2main -lSDL2
 EXEC = allrgb
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)

@@ -34,10 +34,17 @@ void RandomWalkDistributor::Init(Color *c, Point *p) {
 }
 
 bool RandomWalkDistributor::isOccupied(int x, int y) {
-  if (x < 0 || x >= kMapHeight || y < 0 || y >= kMapWidth) {
+  if (!inBounds(x, y)) {
     return false;
   }
   return map_used_[x][y];
+}
+
+bool RandomWalkDistributor::inBounds(int x, int y) {
+  if (x < 0 || x >= kMapWidth || y < 0 || y >= kMapHeight) {
+    return false;
+  }
+  return true;
 }
 
 void RandomWalkDistributor::Query(Color *c, Point *p) {
@@ -69,7 +76,8 @@ void RandomWalkDistributor::Query(Color *c, Point *p) {
   int dy[] = {-1, 1, 0, 0};
   std::vector<Point> new_points;
   for (int i = 0; i < 4; i++) {
-    if (!isOccupied(dx[i] + from.GetX(), dy[i] + from.GetY())) {
+    if (!isOccupied(dx[i] + from.GetX(), dy[i] + from.GetY()) &&
+        inBounds(dx[i] + from.GetX(), dy[i] + from.GetY())) {
       new_points.push_back(Point(dx[i] + from.GetX(), dy[i] + from.GetY()));
     }
   }
@@ -165,12 +173,12 @@ void RandomWalkDistributor::updateNeighbour(
 void RandomWalkDistributor::colorSearch(
   int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi
 ) {
-  if (xlo > prev_color_.GetR() + color_range_ ||
-      xhi < prev_color_.GetR() - color_range_ ||
-      ylo > prev_color_.GetG() + color_range_ ||
-      yhi < prev_color_.GetG() - color_range_ ||
-      zlo > prev_color_.GetB() + color_range_ ||
-      zhi < prev_color_.GetB() - color_range_ ||
+  if (xlo > prev_color_.GetR() + color_range_ * 0.5 ||
+      xhi < prev_color_.GetR() - color_range_ * 0.5 ||
+      ylo > prev_color_.GetG() + color_range_ * 0.5 ||
+      yhi < prev_color_.GetG() - color_range_ * 0.5 ||
+      zlo > prev_color_.GetB() + color_range_ * 0.5 ||
+      zhi < prev_color_.GetB() - color_range_ * 0.5 ||
       colors_used_[px][py][pz] == (xhi - xlo + 1) * (yhi - ylo + 1) * (zhi - zlo + 1)) {
     return;
   }

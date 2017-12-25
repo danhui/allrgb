@@ -15,9 +15,10 @@ class RandomWalkDistributor : public Distributor {
     virtual bool Done();
 
   private:
-    Color color_at_[kMapHeight][kMapWidth];
-    bool map_used_[kMapHeight][kMapWidth];
+    Color color_at_[kMapWidth + 1][kMapHeight + 1];
+    bool map_used_[kMapWidth + 1][kMapHeight + 1];
     bool isOccupied(int x, int y);
+    bool inBounds(int x, int y);
 
     Point color_location_[kMaxColor + 1][kMaxColor + 1][kMaxColor + 1];
 
