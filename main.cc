@@ -54,12 +54,14 @@ int main(int argc, char* argv[]) {
   std::map<int, int> key_status;
   // Handle key press status at a constant interval.
   clock_t last_key_handle = clock();
+  int counter = 0;
   while (event.getValue() != kEscapeCode) {
     if (!distributor->done()) {
       distributor->query(&c, &p);
       display->drawPoint(p.getX(), p.getY(), c);
       debug(1, "Color (%d,%d,%d) at point (%d,%d)\n",
           c.getR(), c.getG(), c.getB(), p.getX(), p.getY());
+      counter ++;
     }
     // Query for events, and update keyboard status.
     event = display->eventPoll();
@@ -74,7 +76,9 @@ int main(int argc, char* argv[]) {
       display->handleKeys(key_status);
       last_key_handle = clock();
     }
-    display->display();
+    if (counter % 4096 == 0) {
+      display->display();
+    }
   }
   return 0;
 }

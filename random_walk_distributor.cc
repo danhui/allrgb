@@ -87,10 +87,11 @@ void RandomWalkDistributor::query(Color *c, Point *p) {
   *p = new_points[0];
   int val = 0;
   for (int i = 0; i < 4; i++) {
-    if (isOccupied(p->getX() + dx[i], p->getY() + dy[i])) {
+    if (isOccupied(p->getX() + dx[i], p->getY() + dy[i]) &&
+        inBounds(p->getX() + dx[i], p->getY() + dy[i])) {
       prev_color_ = color_at_[p->getX() + dx[i]][p->getY() + dy[i]];
       updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, -1);
-    } else {
+    } else if (inBounds(p->getX() + dx[i], p->getY() + dy[i])) {
       val ++;
     }
   }
