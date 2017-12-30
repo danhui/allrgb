@@ -6,6 +6,8 @@
 #include <chrono>
 #include <tuple>
 #include <algorithm>
+#include <limits>
+#include <cmath>
 
 #include "color.h"
 #include "debug.h"
@@ -14,12 +16,20 @@
 
 void RandomWalkDistributor::init(Color *c, Point *p) {
   memset(color_at_, 0, sizeof(color_at_));
-  memset(map_used_, 0, sizeof(map_used_));
-  memset(color_location_, 0, sizeof(color_location_));
+  memset(counter_, 0, sizeof(counter_));
+  memset(status_, 0, sizeof(status_));
   memset(neighbour_spots_, 0, sizeof(neighbour_spots_));
   memset(colors_used_, 0, sizeof(colors_used_));
+  for (int i = 0; i <= kMaxColor; i++) {
+    for (int j = 0; j <= kMaxColor; j++) {
+      for (int k = 0; k <= kMaxColor; k++) {
+        color_location_[i][j][k].clear();
+      }
+    }
+  }
 
-  std::default_random_engine generator;
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
   std::uniform_int_distribution<int> distribution(0, kMaxColor);
   auto channel_value = std::bind(distribution, generator);
   *c = Color(channel_value(), channel_value(), channel_value());
@@ -28,16 +38,28 @@ void RandomWalkDistributor::init(Color *c, Point *p) {
 
   colorUpdate(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor);
   color_at_[p->getX()][p->getY()] = *c;
-  map_used_[p->getX()][p->getY()] = true;
-  color_location_[c->getR()][c->getG()][c->getB()] = *p;
-  updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, 4);
+  status_[p->getX()][p->getY()] = kOccupied;
+  int dx[] = {0, 0, -1 ,1};
+  int dy[] = {-1, 1, 0, 0};
+  for (int i = 0; i < 4; i++) {
+    int tx = p->getX() + dx[i];
+    int ty = p->getY() + dy[i];
+    if (!inBounds(tx, ty)) {
+      continue;
+    }
+    counter_[tx][ty] = 1;
+    color_at_[tx][ty] = *c;
+    color_location_[c->getR()][c->getG()][c->getB()].insert(Point(tx, ty));
+    status_[tx][ty] = kCandidate;
+    updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, 1);
+  }
 }
 
 bool RandomWalkDistributor::isOccupied(int x, int y) {
   if (!inBounds(x, y)) {
     return false;
   }
-  return map_used_[x][y];
+  return status_[x][y] == kOccupied;
 }
 
 bool RandomWalkDistributor::inBounds(int x, int y) {
@@ -54,6 +76,7 @@ void RandomWalkDistributor::query(Color *c, Point *p) {
     colorSearch(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor);
     color_range_ *= 2;
   }
+
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::shuffle(
     candidates_.begin(), candidates_.end(), std::default_random_engine(seed));
@@ -61,61 +84,83 @@ void RandomWalkDistributor::query(Color *c, Point *p) {
   prev_color_ = *c;
   colorUpdate(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor);
 
-  candidates_.clear();
-  color_range_ = 1;
-  while (candidates_.empty()) {
+  new_points_.clear();
+  best_dist_ = 100;
+  while (new_points_.empty()) {
     findNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor);
-    color_range_ *= 2;
+    best_dist_ *= 2;
   }
-  seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::shuffle(
-    candidates_.begin(), candidates_.end(), std::default_random_engine(seed));
-  Color tc = candidates_[0];
-  Point from = color_location_[tc.getR()][tc.getG()][tc.getB()];
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(0, new_points_.size() - 1);
+  std::set<Point>::iterator it(new_points_.begin());
+  std::advance(it, dis(gen));
+  *p = *it;
+
   int dx[] = {0, 0, -1 ,1};
   int dy[] = {-1, 1, 0, 0};
-  std::vector<Point> new_points;
   for (int i = 0; i < 4; i++) {
-    if (!isOccupied(dx[i] + from.getX(), dy[i] + from.getY()) &&
-        inBounds(dx[i] + from.getX(), dy[i] + from.getY())) {
-      new_points.push_back(Point(dx[i] + from.getX(), dy[i] + from.getY()));
+    int tx = p->getX() + dx[i];
+    int ty = p->getY() + dy[i];
+    Color tc = color_at_[tx][ty];
+    if (isOccupied(tx, ty) || !inBounds(tx, ty)) {
+      continue;
     }
-  }
-  seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::shuffle(
-    new_points.begin(), new_points.end(), std::default_random_engine(seed));
-  *p = new_points[0];
-  int val = 0;
-  for (int i = 0; i < 4; i++) {
-    if (isOccupied(p->getX() + dx[i], p->getY() + dy[i]) &&
-        inBounds(p->getX() + dx[i], p->getY() + dy[i])) {
-      prev_color_ = color_at_[p->getX() + dx[i]][p->getY() + dy[i]];
+    if (status_[tx][ty] == kCandidate) {
+      color_location_[tc.getR()][tc.getG()][tc.getB()].erase(Point(tx, ty));
+      prev_color_ = tc;
       updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, -1);
-    } else if (inBounds(p->getX() + dx[i], p->getY() + dy[i])) {
-      val ++;
     }
+    color_at_[tx][ty] = Color(
+      (tc.getR() * counter_[tx][ty] + c->getR()) / (counter_[tx][ty] + 1),
+      (tc.getG() * counter_[tx][ty] + c->getG()) / (counter_[tx][ty] + 1),
+      (tc.getB() * counter_[tx][ty] + c->getB()) / (counter_[tx][ty] + 1));
+    counter_[tx][ty] ++;
+    tc = color_at_[tx][ty];
+    color_location_[tc.getR()][tc.getG()][tc.getB()].insert(Point(tx, ty));
+    prev_color_ = tc;
+    updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, 1);
+    status_[tx][ty] = kCandidate;
   }
+  assert(status_[p->getX()][p->getY()] == kCandidate);
+  Color tc = color_at_[p->getX()][p->getY()];
+  color_location_[tc.getR()][tc.getG()][tc.getB()].erase(*p);
+  prev_color_ = tc;
+  updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, -1);
   color_at_[p->getX()][p->getY()] = *c;
-  map_used_[p->getX()][p->getY()] = true;
-  color_location_[c->getR()][c->getG()][c->getB()] = *p;
+  status_[p->getX()][p->getY()] = kOccupied;
   prev_color_ = *c;
-  updateNeighbour(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor, val);
 }
 
 void RandomWalkDistributor::findNeighbour(
   int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi
 ) {
-  if (xlo > prev_color_.getR() + color_range_ ||
-      xhi < prev_color_.getR() - color_range_ ||
-      ylo > prev_color_.getG() + color_range_ ||
-      yhi < prev_color_.getG() - color_range_ ||
-      zlo > prev_color_.getB() + color_range_ ||
-      zhi < prev_color_.getB() - color_range_ ||
+  if (xlo > prev_color_.getR() + best_dist_ * 0.2 ||
+      xhi < prev_color_.getR() - best_dist_ * 0.2 ||
+      ylo > prev_color_.getG() + best_dist_ * 0.2 ||
+      yhi < prev_color_.getG() - best_dist_ * 0.2 ||
+      zlo > prev_color_.getB() + best_dist_ * 0.2 ||
+      zhi < prev_color_.getB() - best_dist_ * 0.2 ||
       neighbour_spots_[px][py][pz] == 0) {
     return;
   }
   if (xlo == xhi && ylo == yhi && zlo == zhi) {
-    candidates_.push_back(Color(xlo, ylo, zlo));
+    /*int dist = abs(xlo - prev_color_.getR()) +
+      abs(ylo - prev_color_.getG()) +
+      abs(zlo - prev_color_.getB());*/
+    int dist = pow(xlo - prev_color_.getR(), 2) +
+      pow(ylo - prev_color_.getG(), 2) +
+      pow(zlo - prev_color_.getB(), 2);
+    if (dist < best_dist_) {
+      new_points_.clear();
+      best_dist_ = dist;
+    }
+    if (dist == best_dist_) {
+      new_points_.insert(
+        color_location_[xlo][ylo][zlo].begin(),
+        color_location_[xlo][ylo][zlo].end());
+    }
     return;
   }
   for (auto x :
@@ -174,12 +219,12 @@ void RandomWalkDistributor::updateNeighbour(
 void RandomWalkDistributor::colorSearch(
   int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi
 ) {
-  if (xlo > prev_color_.getR() + color_range_ * 0.5 ||
-      xhi < prev_color_.getR() - color_range_ * 0.5 ||
-      ylo > prev_color_.getG() + color_range_ * 0.5 ||
-      yhi < prev_color_.getG() - color_range_ * 0.5 ||
-      zlo > prev_color_.getB() + color_range_ * 0.5 ||
-      zhi < prev_color_.getB() - color_range_ * 0.5 ||
+  if (xlo > prev_color_.getR() + color_range_ ||
+      xhi < prev_color_.getR() - color_range_ ||
+      ylo > prev_color_.getG() + color_range_ ||
+      yhi < prev_color_.getG() - color_range_ ||
+      zlo > prev_color_.getB() + color_range_ ||
+      zhi < prev_color_.getB() - color_range_ ||
       colors_used_[px][py][pz] == (xhi - xlo + 1) * (yhi - ylo + 1) * (zhi - zlo + 1)) {
     return;
   }

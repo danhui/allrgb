@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cassert>
 
 // debug() is like printf, except it takes an additional level for debug level,
 // where a higher number results in more verbose output.
