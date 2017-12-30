@@ -77,9 +77,6 @@ void RandomWalkDistributor::query(Color *c, Point *p) {
     color_range_ *= 2;
   }
 
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::shuffle(
-    candidates_.begin(), candidates_.end(), std::default_random_engine(seed));
   *c = candidates_[0];
   prev_color_ = *c;
   colorUpdate(0, 0, 0, 0, kMaxColor, 0, kMaxColor, 0, kMaxColor);
@@ -225,6 +222,7 @@ void RandomWalkDistributor::colorSearch(
       yhi < prev_color_.getG() - color_range_ ||
       zlo > prev_color_.getB() + color_range_ ||
       zhi < prev_color_.getB() - color_range_ ||
+      candidates_.size() > 0 ||
       colors_used_[px][py][pz] == (xhi - xlo + 1) * (yhi - ylo + 1) * (zhi - zlo + 1)) {
     return;
   }
@@ -232,15 +230,31 @@ void RandomWalkDistributor::colorSearch(
     candidates_.push_back(Color(xlo, ylo, zlo));
     return;
   }
-  for (auto x :
-       {std::make_tuple(px * 2 + 1, xlo, (xlo + xhi) / 2),
-        std::make_tuple(px * 2 + 2, (xlo + xhi) / 2 + 1, xhi)}) {
-    for (auto y :
-         {std::make_tuple(py * 2 + 1, ylo, (ylo + yhi) / 2),
-          std::make_tuple(py * 2 + 2, (ylo + yhi) / 2 + 1, yhi)}) {
-      for (auto z :
-           {std::make_tuple(pz * 2 + 1, zlo, (zlo + zhi) / 2),
-            std::make_tuple(pz * 2 + 2, (zlo + zhi) / 2 + 1, zhi)}) {
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::uniform_int_distribution<int> distribution(0, 1);
+  auto channel_value = std::bind(distribution, generator);
+  std::tuple<int, int, int> ax[] = {
+    std::make_tuple(px * 2 + 1, xlo, (xlo + xhi) / 2),
+    std::make_tuple(px * 2 + 2, (xlo + xhi) / 2 + 1, xhi)};
+  if (channel_value()) {
+    std::swap(ax[0], ax[1]);
+  }
+  std::tuple<int, int, int> ay[] = {
+    std::make_tuple(py * 2 + 1, ylo, (ylo + yhi) / 2),
+    std::make_tuple(py * 2 + 2, (ylo + yhi) / 2 + 1, yhi)};
+  if (channel_value()) {
+    std::swap(ay[0], ay[1]);
+  }
+  std::tuple<int, int, int> az[] = {
+    std::make_tuple(pz * 2 + 1, zlo, (zlo + zhi) / 2),
+    std::make_tuple(pz * 2 + 2, (zlo + zhi) / 2 + 1, zhi)};
+  if (channel_value()) {
+    std::swap(az[0], az[1]);
+  }
+  for (auto x : ax) {
+    for (auto y : ay) {
+      for (auto z : az) {
         colorSearch(
           std::get<0>(x), std::get<0>(y), std::get<0>(z),
           std::get<1>(x), std::get<2>(x),

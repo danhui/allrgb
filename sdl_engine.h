@@ -36,6 +36,7 @@ class SDLEngine : public GraphicsEngine {
     SDL_Window* window_;
     int refresh_rate_;
     clock_t last_render_;
+    clock_t last_key_handle_;
     SDL_Renderer* renderer_;
 
     SDL_Texture* texture_;

@@ -51,8 +51,6 @@ int main(int argc, char* argv[]) {
   Event event;
   // Stores the status of keyboard keys.
   std::map<int, int> key_status;
-  // Handle key press status at a constant interval.
-  clock_t lastKeyHandle = clock();
   int counter = 1;
   while (event.getValue() != kEscapeCode) {
     if (!distributor->done()) {
@@ -68,13 +66,10 @@ int main(int argc, char* argv[]) {
     if (event.getType() != kNoEvent) {
       debug(4, "Event read: %d %d\n", event.getType(), event.getValue());
     }
-    if ((double) (clock() - lastKeyHandle) / CLOCKS_PER_SEC >= kKeyProcess) {
-      // Process keyboard state.
-      debug(10, "Last key process %.5f sec. ago\n", diff);
-      display->handleKeys(key_status);
-      lastKeyHandle = clock();
+    display->handleKeys(key_status);
+    if (counter % 4096 == 0) {
+      display->display();
     }
-    display->display();
   }
   return 0;
 }

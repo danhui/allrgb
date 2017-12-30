@@ -42,6 +42,7 @@ void SDLEngine::init(int height, int width) {
   vx_ = 0;
   vy_ = 0;
   last_render_ = clock();
+  last_key_handle_ = clock();
 }
 
 void SDLEngine::drawRectangle(int x, int y, int w, int h, Color c) {
@@ -102,6 +103,11 @@ void SDLEngine::adjustSpeed(const std::map<int,int> &key_status, int dir,
 }
 
 void SDLEngine::handleKeys(const std::map<int, int> &key_status) {
+  double diff = (double) (clock() - last_key_handle_) / CLOCKS_PER_SEC;
+  if (diff < kKeyProcess) {
+    return;
+  }
+  debug(10, "Last key process %.5f sec. ago\n", diff);
   adjustSpeed(key_status, kArrowUp, -1, &vy_);
   adjustSpeed(key_status, kArrowDown, 1, &vy_);
   adjustSpeed(key_status, kArrowLeft, -1, &vx_);
@@ -116,19 +122,22 @@ void SDLEngine::handleKeys(const std::map<int, int> &key_status) {
   y_ = std::min(std::max(0, y_), kMapHeight - height_);
   if (vx_ != 0 || vy_ != 0) {
     debug(5, "%d %d %d %d\n", x_, y_, vx_, vy_);
+    display();
   }
+  last_key_handle_ = clock();
 }
 
 void SDLEngine::display() {
   double diff = (double) (clock() - last_render_) / CLOCKS_PER_SEC;
-  if (diff >= 1.0 / refresh_rate_) {
-    // Again check refresh rate before redisplaying.
-    debug(10, "Last render %.5f sec. ago\n", diff);
-    SDL_RenderClear(renderer_);
-    // Display a part of the texture_.
-    SDL_Rect srcrect = {x_, y_, width_, height_};
-    SDL_RenderCopy(renderer_, texture_, &srcrect, NULL);
-    SDL_RenderPresent(renderer_);
-    last_render_ = clock();
+  // Check refresh rate before redisplaying.
+  if (diff < 1.0 / refresh_rate_) {
+    return;
   }
+  debug(10, "Last render %.5f sec. ago\n", diff);
+  SDL_RenderClear(renderer_);
+  // Display a part of the texture_.
+  SDL_Rect srcrect = {x_, y_, width_, height_};
+  SDL_RenderCopy(renderer_, texture_, &srcrect, NULL);
+  SDL_RenderPresent(renderer_);
+  last_render_ = clock();
 }
