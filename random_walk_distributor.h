@@ -9,6 +9,8 @@
 #include "graphics_engine.h"
 #include "point.h"
 
+const double kRadiusRatio = 0.3;
+
 const int kCandidate = 1;
 const int kOccupied = 2;
 

@@ -133,22 +133,19 @@ void RandomWalkDistributor::query(Color *c, Point *p) {
 void RandomWalkDistributor::findNeighbour(
   int px, int py, int pz, int xlo, int xhi, int ylo, int yhi, int zlo, int zhi
 ) {
-  if (xlo > prev_color_.getR() + best_dist_ * 0.2 ||
-      xhi < prev_color_.getR() - best_dist_ * 0.2 ||
-      ylo > prev_color_.getG() + best_dist_ * 0.2 ||
-      yhi < prev_color_.getG() - best_dist_ * 0.2 ||
-      zlo > prev_color_.getB() + best_dist_ * 0.2 ||
-      zhi < prev_color_.getB() - best_dist_ * 0.2 ||
+  if (xlo > prev_color_.getR() + best_dist_ * kRadiusRatio ||
+      xhi < prev_color_.getR() - best_dist_ * kRadiusRatio ||
+      ylo > prev_color_.getG() + best_dist_ * kRadiusRatio ||
+      yhi < prev_color_.getG() - best_dist_ * kRadiusRatio ||
+      zlo > prev_color_.getB() + best_dist_ * kRadiusRatio ||
+      zhi < prev_color_.getB() - best_dist_ * kRadiusRatio ||
       neighbour_spots_[px][py][pz] == 0) {
     return;
   }
   if (xlo == xhi && ylo == yhi && zlo == zhi) {
-    /*int dist = abs(xlo - prev_color_.getR()) +
+    int dist = abs(xlo - prev_color_.getR()) +
       abs(ylo - prev_color_.getG()) +
-      abs(zlo - prev_color_.getB());*/
-    int dist = pow(xlo - prev_color_.getR(), 2) +
-      pow(ylo - prev_color_.getG(), 2) +
-      pow(zlo - prev_color_.getB(), 2);
+      abs(zlo - prev_color_.getB());
     if (dist < best_dist_) {
       new_points_.clear();
       best_dist_ = dist;
